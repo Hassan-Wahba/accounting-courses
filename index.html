@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>بوابة المقررات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pine:#103F39;
+  --pine-deep:#0B2C28;
+  --pine-soft:#1B554C;
+  --gold:#C8A24B;
+  --gold-dim:#A8823A;
+  --paper:#F5F3ED;
+  --card:#FFFFFF;
+  --ink:#16302B;
+  --muted:#6E827C;
+  --line:#E5E1D6;
+  --soft:#F0EEE6;
+  --danger:#B4472F;
+  --ok:#2E7D5B;
+  --fh:'Tajawal',system-ui,-apple-system,sans-serif;
+  --fb:'IBM Plex Sans Arabic',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--fb);
+  background:var(--paper);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.7;
+}
+button{font-family:inherit;cursor:pointer}
+a{color:inherit}
+
+/* ====== بوابة الدخول ====== */
+#gate{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px 16px;
+  background:
+    radial-gradient(1100px 520px at 50% -12%, #16514A 0%, rgba(22,81,74,0) 62%),
+    linear-gradient(180deg,#0E3A34 0%, #0B2C28 100%);
+}
+.gate-card{
+  width:100%;max-width:420px;
+  background:var(--card);
+  border-radius:18px;
+  padding:38px 30px 30px;
+  text-align:center;
+  box-shadow:0 26px 60px rgba(4,26,23,.38);
+  border-top:3px solid var(--gold);
+}
+.seal{
+  width:54px;height:54px;margin:0 auto 18px;
+  border-radius:50%;
+  background:var(--pine);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 4px #fff,0 0 0 5px var(--gold);
+}
+.seal svg{width:22px;height:22px;fill:none;stroke:var(--gold);stroke-width:1.9}
+.gate-card h1{font-family:var(--fh);font-size:23px;font-weight:800;color:var(--pine);letter-spacing:-.2px}
+.gate-card p{font-size:13.5px;color:var(--muted);margin-top:7px}
+.pw-wrap{margin-top:24px;position:relative}
+#pw{
+  width:100%;padding:14px 16px;
+  border:1.5px solid var(--line);border-radius:11px;
+  background:var(--paper);
+  font-family:var(--fb);font-size:15px;letter-spacing:.5px;
+  direction:ltr;text-align:center;
+  color:var(--ink);
+  transition:border-color .18s,box-shadow .18s;
+}
+#pw:focus{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(16,63,57,.09);background:#fff}
+#enter{
+  width:100%;margin-top:12px;padding:13px;
+  border:0;border-radius:11px;
+  background:var(--pine);color:#fff;
+  font-family:var(--fh);font-size:15.5px;font-weight:700;
+  transition:background .18s,transform .12s;
+}
+#enter:hover{background:var(--pine-soft)}
+#enter:active{transform:translateY(1px)}
+#enter:disabled{opacity:.6;cursor:wait}
+#err{
+  min-height:20px;margin-top:12px;
+  font-size:13px;color:var(--danger);font-weight:500;
+  opacity:0;transition:opacity .2s;
+}
+#err.on{opacity:1}
+.gate-foot{margin-top:26px;font-size:11.5px;color:rgba(255,255,255,.4);letter-spacing:.4px;direction:ltr}
+
+/* ====== الترويسة ====== */
+#app{min-height:100vh;display:flex;flex-direction:column}
+#app[hidden]{display:none}
+header{
+  background:linear-gradient(180deg,#134A43 0%,#0E3630 100%);
+  padding:26px 0 24px;
+}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand h1{font-family:var(--fh);font-size:27px;font-weight:800;color:#fff;letter-spacing:-.3px;white-space:nowrap}
+.brand .rule{flex:0 0 46px;height:3px;background:var(--gold);border-radius:2px}
+header .sub{margin-top:6px;font-size:13px;color:#A9C2BC;letter-spacing:.2px}
+
+/* ====== شريط الأسابيع ====== */
+.weeks-band{background:#fff;border-bottom:1px solid var(--line);padding:16px 0 18px}
+.weeks-label{font-size:11.5px;color:var(--gold-dim);font-weight:600;letter-spacing:.6px;margin-bottom:10px}
+.weeks{display:flex;gap:9px;overflow-x:auto;padding:3px 2px 6px;scrollbar-width:thin}
+.weeks::-webkit-scrollbar{height:5px}
+.weeks::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+.wk{
+  flex:0 0 auto;width:38px;height:38px;border-radius:50%;
+  border:1.5px solid var(--line);background:#fff;
+  color:var(--pine);font-family:var(--fh);font-size:14.5px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .16s;
+}
+.wk:hover:not(.locked){border-color:var(--pine);background:var(--soft)}
+.wk.active{background:var(--pine);color:#fff;border-color:#fff;box-shadow:0 0 0 2px var(--gold)}
+.wk.locked{opacity:.38;cursor:not-allowed;background:var(--soft)}
+
+/* ====== محتوى الأسبوع ====== */
+main{flex:1;padding:26px 0 46px}
+.wk-head{margin-bottom:20px}
+.wk-tag{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:12px;color:var(--gold-dim);font-weight:600;letter-spacing:.4px;
+}
+.wk-tag .dot{width:3px;height:3px;border-radius:50%;background:var(--line)}
+.wk-tag .date{color:var(--muted);font-weight:500}
+.wk-head h2{font-family:var(--fh);font-size:25px;font-weight:800;color:var(--pine);margin-top:4px;letter-spacing:-.2px}
+.wk-head .desc{font-size:14px;color:var(--muted);margin-top:6px;max-width:660px}
+
+.sec{
+  background:var(--card);border:1px solid var(--line);border-radius:13px;
+  margin-bottom:11px;overflow:hidden;
+  transition:box-shadow .18s;
+}
+.sec:hover{box-shadow:0 2px 14px rgba(16,63,57,.05)}
+.sec-head{
+  width:100%;display:flex;align-items:center;gap:12px;
+  padding:15px 17px;background:none;border:0;text-align:right;
+}
+.badge{
+  flex:0 0 auto;width:29px;height:29px;border-radius:50%;
+  background:var(--pine);color:#fff;
+  font-family:var(--fh);font-size:13px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.sec-title{font-family:var(--fh);font-size:16.5px;font-weight:700;color:var(--pine);flex:0 0 auto}
+.chip{
+  font-size:11.5px;color:var(--muted);background:var(--soft);
+  padding:3px 10px;border-radius:999px;font-weight:500;
+  flex:0 0 auto;
+}
+.spacer{flex:1}
+.caret{
+  flex:0 0 auto;color:var(--muted);font-size:10px;
+  transition:transform .2s;
+}
+.sec.open .caret{transform:rotate(180deg)}
+.sec-body{display:none;padding:0 17px 15px;border-top:1px solid var(--line);margin-top:0}
+.sec.open .sec-body{display:block;padding-top:13px}
+
+.row{
+  display:flex;align-items:center;gap:10px;
+  background:var(--paper);border:1px solid transparent;
+  border-radius:9px;padding:12px 14px;margin-bottom:8px;
+  text-decoration:none;transition:all .16s;
+}
+a.row:hover{background:#fff;border-color:var(--pine);transform:translateX(-2px)}
+.row:last-child{margin-bottom:0}
+.row .label{font-size:14.5px;font-weight:500;color:var(--ink)}
+.row .tag{font-size:10.5px;color:var(--muted);letter-spacing:.5px;font-weight:600;direction:ltr}
+.row .arrow{color:var(--pine);font-size:15px}
+.row.off{opacity:.55}
+.row.off .tag{color:var(--muted)}
+
+/* الاختبار */
+.q{background:var(--paper);border-radius:10px;padding:14px 15px;margin-bottom:10px}
+.q:last-child{margin-bottom:0}
+.q .qt{font-size:14.5px;font-weight:600;color:var(--ink);margin-bottom:11px;display:flex;gap:8px}
+.q .qn{color:var(--gold-dim);font-family:var(--fh);font-weight:700;flex:0 0 auto}
+.opt{
+  display:block;width:100%;text-align:right;
+  background:#fff;border:1.5px solid var(--line);border-radius:8px;
+  padding:9px 13px;margin-bottom:7px;
+  font-family:var(--fb);font-size:13.5px;color:var(--ink);
+  transition:all .15s;
+}
+.opt:hover:not(:disabled){border-color:var(--pine)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--ok);background:#EFF7F2;color:var(--ok);font-weight:600}
+.opt.wrong{border-color:var(--danger);background:#FBF0ED;color:var(--danger)}
+.why{
+  display:none;font-size:12.5px;color:var(--muted);
+  background:#fff;border-right:2.5px solid var(--gold);
+  padding:9px 12px;border-radius:0 7px 7px 0;margin-top:8px;
+}
+.why.on{display:block}
+
+/* المصطلحات */
+.term{background:var(--paper);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.term:last-child{margin-bottom:0}
+.term .t{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--pine)}
+.term .en{font-size:12px;color:var(--gold-dim);font-weight:500;direction:ltr;display:inline-block;margin-right:8px}
+.term .d{font-size:13.5px;color:var(--muted);margin-top:4px}
+
+/* التكليف */
+.due{
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  background:#FFFDF6;border:1px solid #EADFC2;border-right:3px solid var(--gold);
+  border-radius:0 9px 9px 0;padding:11px 14px;margin-bottom:9px;
+}
+.due .lb{font-size:12px;color:var(--gold-dim);font-weight:600;letter-spacing:.3px}
+.due .dt{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--pine)}
+.task{
+  font-size:14px;color:var(--ink);line-height:1.8;white-space:pre-wrap;
+  background:var(--paper);border-radius:10px;padding:12px 14px;margin-bottom:9px;
+}
+
+.empty{font-size:13px;color:var(--muted);padding:10px 2px;text-align:center}
+
+/* حالة القفل */
+.locked-box{
+  background:var(--card);border:1px dashed var(--line);border-radius:13px;
+  padding:46px 24px;text-align:center;
+}
+.locked-box .ic{font-size:26px;margin-bottom:10px;opacity:.35}
+.locked-box h3{font-family:var(--fh);font-size:18px;color:var(--pine);font-weight:700}
+.locked-box p{font-size:13.5px;color:var(--muted);margin-top:6px}
+
+footer{
+  border-top:1px solid var(--line);padding:18px 0;
+  text-align:center;font-size:11.5px;color:var(--muted);
+  letter-spacing:.5px;direction:ltr;
+}
+
+@media(max-width:600px){
+  .brand h1{font-size:22px}
+  .brand .rule{flex-basis:30px}
+  .wk-head h2{font-size:21px}
+  .sec-head{padding:13px 14px;gap:9px}
+  .sec-title{font-size:15px}
+  .wrap{padding:0 15px}
+}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <div class="seal">
+      <svg viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.4a4 4 0 0 1 8 0v3.1"/></svg>
+    </div>
+    <h1>بوابة المقررات</h1>
+    <p>اكتب كلمة الدخول الخاصة بمقررك</p>
+    <div class="pw-wrap">
+      <input id="pw" type="password" autocomplete="off" spellcheck="false" placeholder="••••••••••">
+      <button id="enter">دخول</button>
+      <div id="err"></div>
+    </div>
+  </div>
+  <div class="gate-foot">HASSAN MOHAMED HOSNY</div>
+</div>
+
+<div id="app" hidden>
+  <header>
+    <div class="wrap">
+      <div class="brand"><h1 id="cTitle"></h1><span class="rule"></span></div>
+      <div class="sub" id="cSub"></div>
+    </div>
+  </header>
+
+  <div class="weeks-band">
+    <div class="wrap">
+      <div class="weeks-label">أسابيع الفصل</div>
+      <div class="weeks" id="weeks"></div>
+    </div>
+  </div>
+
+  <main><div class="wrap" id="panel"></div></main>
+
+  <footer>HASSAN MOHAMED HOSNY</footer>
+</div>
+
+<script src="data/course-1.js"></script>
+<script src="data/course-2.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- أدوات ---------- */
+  var AR_D = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+  var AR_M = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  function ar(n){ return String(n).replace(/[0-9]/g,function(d){return AR_D[+d];}); }
+  function fmtDate(iso){
+    if(!iso) return '';
+    var p = String(iso).split('-');
+    if(p.length!==3) return iso;
+    var y=+p[0], m=+p[1], d=+p[2];
+    if(!m||m<1||m>12) return iso;
+    return ar(d)+' '+AR_M[m-1]+' '+ar(y);
+  }
+  function fmtShort(iso){
+    if(!iso) return '';
+    var p = String(iso).split('-');
+    if(p.length!==3) return iso;
+    var m=+p[1], d=+p[2];
+    if(!m||m<1||m>12) return iso;
+    return ar(d)+' '+AR_M[m-1];
+  }
+  function esc(s){
+    return String(s==null?'':s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function safeUrl(u){
+    u = String(u||'').trim();
+    return /^https?:\/\//i.test(u) ? u : '';
+  }
+  function b64d(s){
+    var bin = atob(s), out = new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++) out[i]=bin.charCodeAt(i);
+    return out;
+  }
+
+  /* ---------- فك التشفير ---------- */
+  var ITER = 150000;
+  function deriveKey(pass, salt){
+    var enc = new TextEncoder();
+    return crypto.subtle.importKey('raw', enc.encode(pass), 'PBKDF2', false, ['deriveKey'])
+      .then(function(km){
+        return crypto.subtle.deriveKey(
+          {name:'PBKDF2', salt:salt, iterations:ITER, hash:'SHA-256'},
+          km, {name:'AES-GCM', length:256}, false, ['decrypt']
+        );
+      });
+  }
+  function tryOpen(blob, pass){
+    return deriveKey(pass, b64d(blob.salt)).then(function(key){
+      return crypto.subtle.decrypt({name:'AES-GCM', iv:b64d(blob.iv)}, key, b64d(blob.ct));
+    }).then(function(buf){
+      return JSON.parse(new TextDecoder().decode(buf));
+    });
+  }
+
+  /* ---------- الحالة ---------- */
+  var DATA = null, cur = 1;
+
+  /* ---------- البوابة ---------- */
+  var gate=document.getElementById('gate'), app=document.getElementById('app'),
+      pw=document.getElementById('pw'), btn=document.getElementById('enter'),
+      err=document.getElementById('err');
+
+  function fail(msg){
+    err.textContent = msg; err.classList.add('on');
+    btn.disabled=false; btn.textContent='دخول';
+    pw.value=''; pw.focus();
+  }
+
+  function unlock(){
+    var pass = pw.value;
+    if(!pass){ fail('اكتب كلمة الدخول'); return; }
+    err.classList.remove('on');
+    btn.disabled=true; btn.textContent='جارٍ الفتح…';
+
+    var blobs = window.__PORTAL_BLOBS || {};
+    var keys = Object.keys(blobs);
+    if(!keys.length){ fail('المحتوى لسه ما اترفعش'); return; }
+
+    var i = 0;
+    (function next(){
+      if(i >= keys.length){ fail('كلمة الدخول غير صحيحة'); return; }
+      tryOpen(blobs[keys[i]], pass).then(function(data){
+        DATA = data; render();
+      }).catch(function(){ i++; next(); });
+    })();
+  }
+
+  btn.addEventListener('click', unlock);
+  pw.addEventListener('keydown', function(e){ if(e.key==='Enter') unlock(); });
+
+  document.addEventListener('keydown', function(e){
+    if(e.ctrlKey && e.shiftKey && (e.key==='L'||e.key==='l')){
+      e.preventDefault(); location.reload();
+    }
+  });
+
+  /* ---------- العرض ---------- */
+  function render(){
+    var meta = DATA.meta||{};
+    document.title = meta.title || 'بوابة المقررات';
+    document.getElementById('cTitle').textContent = meta.title||'';
+    document.getElementById('cSub').textContent = meta.subtitle||'';
+
+    gate.hidden = true; gate.style.display='none';
+    app.hidden = false;
+
+    buildWeeks();
+    cur = pickWeek();
+    show(cur);
+  }
+
+  function weeks(){ return DATA.weeks||[]; }
+
+  function pickWeek(){
+    var ws = weeks(), today = new Date().toISOString().slice(0,10), best = 0;
+    for(var i=0;i<ws.length;i++){
+      if(ws[i].published && ws[i].date && ws[i].date <= today) best = i;
+    }
+    if(best) return ws[best].n;
+    for(var j=0;j<ws.length;j++) if(ws[j].published) return ws[j].n;
+    return ws.length ? ws[0].n : 1;
+  }
+
+  function buildWeeks(){
+    var box = document.getElementById('weeks');
+    box.innerHTML='';
+    weeks().forEach(function(w){
+      var b = document.createElement('button');
+      b.className = 'wk' + (w.published?'':' locked');
+      b.textContent = ar(w.n);
+      b.title = w.date ? fmtDate(w.date) : ('الأسبوع '+ar(w.n));
+      b.dataset.n = w.n;
+      b.addEventListener('click', function(){ show(w.n); });
+      box.appendChild(b);
+    });
+  }
+
+  function markActive(n){
+    var all = document.querySelectorAll('.wk');
+    for(var i=0;i<all.length;i++){
+      all[i].classList.toggle('active', +all[i].dataset.n === n);
+    }
+  }
+
+  function show(n){
+    cur = n; markActive(n);
+    var w = null, ws = weeks();
+    for(var i=0;i<ws.length;i++) if(ws[i].n===n) w=ws[i];
+    var panel = document.getElementById('panel');
+    if(!w){ panel.innerHTML=''; return; }
+
+    var head =
+      '<div class="wk-head">'+
+        '<div class="wk-tag"><span>الأسبوع '+ar(w.n)+'</span>'+
+          (w.date?'<span class="dot"></span><span class="date">'+esc(fmtDate(w.date))+'</span>':'')+
+        '</div>'+
+        (w.published
+          ? '<h2>'+esc(w.title||'الأسبوع '+ar(w.n))+'</h2>'+
+            (w.desc?'<div class="desc">'+esc(w.desc)+'</div>':'')
+          : '')+
+      '</div>';
+
+    if(!w.published){
+      panel.innerHTML = head +
+        '<div class="locked-box"><div class="ic">🔒</div>'+
+        '<h3>الأسبوع ده لسه ما اتفتحش</h3>'+
+        '<p>هيتفتح في وقته بإذن الله</p></div>';
+      return;
+    }
+
+    var secs = [
+      sec(1,'السكشن',   secCount(w.section), bodySection(w.section)),
+      sec(2,'مسائل وتدريبات', cnt(w.problems), bodyList(w.problems)),
+      sec(3,'اختبار قصير', qCount(w.quiz), bodyQuiz(w.quiz)),
+      sec(4,'مصطلحات',  cnt(w.terms), bodyTerms(w.terms)),
+      sec(5,'تكليف',    assignChip(w.assign), bodyAssign(w.assign))
+    ].join('');
+
+    panel.innerHTML = head + secs;
+    wire();
+    var first = panel.querySelector('.sec');
+    if(first) first.classList.add('open');
+  }
+
+  function cnt(a){ a=a||[]; return a.length ? ar(a.length) : '—'; }
+  function qCount(a){ a=a||[]; return a.length ? ar(a.length)+' أسئلة' : '—'; }
+  function secCount(a){
+    a = a||[];
+    var done = 0;
+    for(var i=0;i<a.length;i++) if(safeUrl(a[i].url)) done++;
+    return a.length ? ar(done)+' من '+ar(a.length) : '—';
+  }
+  function assignChip(as){
+    as = as||{};
+    if(as.due) return 'التسليم '+fmtShort(as.due);
+    var has = (as.text&&as.text.trim()) || (as.items&&as.items.length);
+    return has ? 'مطلوب' : '—';
+  }
+
+  function sec(n,title,chip,body){
+    return '<section class="sec"><button class="sec-head">'+
+      '<span class="badge">'+ar(n)+'</span>'+
+      '<span class="sec-title">'+title+'</span>'+
+      '<span class="chip">'+chip+'</span>'+
+      '<span class="spacer"></span>'+
+      '<span class="caret">▼</span>'+
+      '</button><div class="sec-body">'+body+'</div></section>';
+  }
+
+  function bodySection(items){
+    items = items||[];
+    if(!items.length) return '<div class="empty">لسه ما اترفعش</div>';
+    return items.map(function(it){ return rowHtml(it); }).join('');
+  }
+  function bodyList(items){
+    items = items||[];
+    if(!items.length) return '<div class="empty">لسه ما اترفعش</div>';
+    return items.map(function(it){ return rowHtml(it); }).join('');
+  }
+  function rowHtml(it){
+    var u = safeUrl(it.url);
+    var label = esc(it.label||'بند');
+    if(!u){
+      return '<div class="row off"><span class="label">'+label+'</span>'+
+             '<span class="spacer"></span><span class="tag">لسه</span></div>';
+    }
+    return '<a class="row" href="'+esc(u)+'" target="_blank" rel="noopener">'+
+           '<span class="label">'+label+'</span><span class="spacer"></span>'+
+           '<span class="tag">'+esc(it.kind||'PDF')+'</span><span class="arrow">←</span></a>';
+  }
+
+  function bodyQuiz(qs){
+    qs = qs||[];
+    if(!qs.length) return '<div class="empty">لسه ما اترفعش</div>';
+    return qs.map(function(q,i){
+      var opts = (q.choices||[]).map(function(c,j){
+        return '<button class="opt" data-q="'+i+'" data-c="'+j+'">'+esc(c)+'</button>';
+      }).join('');
+      return '<div class="q" data-ans="'+(q.answer==null?-1:q.answer)+'">'+
+        '<div class="qt"><span class="qn">'+ar(i+1)+'.</span><span>'+esc(q.q||'')+'</span></div>'+
+        opts +
+        (q.why?'<div class="why">'+esc(q.why)+'</div>':'')+
+      '</div>';
+    }).join('');
+  }
+
+  function bodyTerms(ts){
+    ts = ts||[];
+    if(!ts.length) return '<div class="empty">لسه ما اترفعش</div>';
+    return ts.map(function(t){
+      return '<div class="term"><span class="t">'+esc(t.term||'')+'</span>'+
+        (t.en?'<span class="en">'+esc(t.en)+'</span>':'')+
+        (t.def?'<div class="d">'+esc(t.def)+'</div>':'')+
+      '</div>';
+    }).join('');
+  }
+
+  function bodyAssign(as){
+    as = as||{};
+    var items = as.items||[];
+    var text = (as.text||'').trim();
+    if(!as.due && !text && !items.length) return '<div class="empty">مفيش تكليف الأسبوع ده</div>';
+    var h = '';
+    if(as.due){
+      h += '<div class="due"><span class="lb">موعد التسليم</span>'+
+           '<span class="dt">'+esc(fmtDate(as.due))+'</span></div>';
+    }
+    if(text) h += '<div class="task">'+esc(text)+'</div>';
+    h += items.map(function(it){ return rowHtml(it); }).join('');
+    return h;
+  }
+
+  function wire(){
+    var heads = document.querySelectorAll('.sec-head');
+    for(var i=0;i<heads.length;i++){
+      heads[i].addEventListener('click', function(){
+        this.parentNode.classList.toggle('open');
+      });
+    }
+    var opts = document.querySelectorAll('.opt');
+    for(var k=0;k<opts.length;k++){
+      opts[k].addEventListener('click', function(){
+        var box = this.closest('.q');
+        if(box.dataset.done) return;
+        box.dataset.done = '1';
+        var ans = +box.dataset.ans;
+        var all = box.querySelectorAll('.opt');
+        for(var m=0;m<all.length;m++){
+          all[m].disabled = true;
+          if(m === ans) all[m].classList.add('right');
+        }
+        if(+this.dataset.c !== ans) this.classList.add('wrong');
+        var why = box.querySelector('.why');
+        if(why) why.classList.add('on');
+      });
+    }
+  }
+
+  pw.focus();
+})();
+</script>
+</body>
+</html>

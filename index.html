@@ -241,6 +241,86 @@ footer{
   letter-spacing:.5px;direction:ltr;
 }
 
+/* ====== بند ملفه محمي ====== */
+button.row{width:100%;border:1px solid transparent;font:inherit;color:inherit;text-align:right;cursor:pointer}
+button.row:hover{background:#fff;border-color:var(--pine);transform:translateX(-2px)}
+button.row:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.row .tag svg{width:11px;height:11px;fill:none;stroke:var(--gold-dim);stroke-width:2.3;vertical-align:-1px;margin-right:5px}
+
+/* ====== العارض المحمي ====== */
+body.vw-open{overflow:hidden}
+#pv{
+  position:fixed;inset:0;z-index:60;
+  display:flex;flex-direction:column;background:#1B2724;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  opacity:0;transition:opacity .18s ease;
+}
+#pv[hidden]{display:none}
+#pv.on{opacity:1}
+.pv-bar{
+  flex:0 0 auto;display:flex;align-items:center;gap:10px;
+  padding:9px 14px;color:#fff;
+  background:linear-gradient(180deg,#134A43 0%,#0E3630 100%);
+  border-bottom:2px solid var(--gold);
+}
+.pv-bar button{
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+  font-family:var(--fh);transition:background .15s;
+}
+.pv-bar button:hover:not(:disabled){background:rgba(255,255,255,.16)}
+.pv-bar button:disabled{opacity:.35;cursor:default}
+.pv-x{flex:0 0 auto;width:36px;height:36px;border-radius:50%;font-size:15px}
+.pv-t{flex:1;min-width:0;line-height:1.35}
+.pv-t b{display:block;font-family:var(--fh);font-size:15.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-t span{display:block;font-size:11.5px;color:#A9C2BC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-ctl{flex:0 0 auto;display:flex;align-items:center;gap:5px}
+.pv-ctl button{width:32px;height:32px;border-radius:8px;font-size:18px;font-weight:700;line-height:1}
+.pv-ctl .pv-z{width:auto;min-width:54px;padding:0 8px;font-size:12.5px;font-weight:600}
+.pv-pg{
+  flex:0 0 auto;font-size:12px;font-weight:600;color:var(--gold);white-space:nowrap;
+  background:rgba(200,162,75,.12);border:1px solid rgba(200,162,75,.3);
+  padding:3px 11px;border-radius:999px;
+}
+.pv-pg:empty{display:none}
+.pv-main{flex:1;position:relative;min-height:0}
+.pv-body{position:absolute;inset:0;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:16px 0 40px}
+.pv-pages{width:max-content;min-width:100%;padding:0 12px}
+.pv-page{position:relative;margin:0 auto 14px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.35);overflow:hidden}
+.pv-page canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
+.pv-page .sh{position:absolute;inset:0;z-index:2}
+.pv-page.ld:after{
+  content:'';position:absolute;top:50%;left:50%;width:26px;height:26px;margin:-13px 0 0 -13px;
+  border-radius:50%;border:3px solid var(--line);border-top-color:var(--gold);animation:pvs .8s linear infinite;
+}
+.pv-page.bad:after{
+  content:'الصفحة دي ما اتعرضتش';position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);
+}
+.pv-st{
+  position:absolute;inset:0;z-index:3;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  padding:24px;text-align:center;color:#DCE7E4;background:#1B2724;
+}
+.pv-st[hidden]{display:none}
+.pv-st .msg{font-size:14.5px;max-width:340px}
+.pv-spin{width:30px;height:30px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--gold);animation:pvs .8s linear infinite}
+.pv-prog{width:220px;max-width:70vw;height:4px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
+.pv-prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .15s}
+.pv-ic{
+  width:44px;height:44px;border-radius:50%;border:2px solid rgba(200,162,75,.6);color:var(--gold);
+  font-family:var(--fh);font-size:22px;font-weight:800;display:flex;align-items:center;justify-content:center;
+}
+.pv-retry{border:0;border-radius:10px;padding:10px 24px;background:var(--gold);color:#3A2C0C;font-family:var(--fh);font-size:14.5px;font-weight:700}
+.pv-note{
+  position:absolute;left:50%;bottom:18px;z-index:4;
+  transform:translate(-50%,12px);opacity:0;pointer-events:none;
+  background:rgba(11,44,40,.95);color:#fff;border:1px solid rgba(200,162,75,.45);
+  padding:9px 16px;border-radius:10px;font-size:13px;white-space:nowrap;transition:all .2s;
+}
+.pv-note.on{opacity:1;transform:translate(-50%,0)}
+@keyframes pvs{to{transform:rotate(360deg)}}
+
 @media(max-width:600px){
   .brand h1{font-size:22px}
   .brand .rule{flex-basis:30px}
@@ -248,6 +328,20 @@ footer{
   .sec-head{padding:13px 14px;gap:9px}
   .sec-title{font-size:15px}
   .wrap{padding:0 15px}
+  .pv-bar{padding:8px 10px;gap:8px}
+  .pv-t b{font-size:14px}
+  .pv-ctl .pv-z,.pv-pg .pw{display:none}
+  .pv-ctl button{width:30px;height:30px}
+  .pv-note{white-space:normal;width:86%;text-align:center}
+}
+
+/* الطباعة مقفولة طول ما الملف المحمي مفتوح */
+@media print{
+  body.vw-open > *{display:none !important}
+  body.vw-open:before{
+    content:"الملف ده للعرض داخل البورتال فقط";display:block;
+    padding:60px 20px;text-align:center;font:700 20px var(--fh);color:#103F39;
+  }
 }
 </style>
 </head>
@@ -287,6 +381,25 @@ footer{
   <main><div class="wrap" id="panel"></div></main>
 
   <footer>HASSAN MOHAMED HOSNY</footer>
+</div>
+
+<!-- العارض المحمي: الملف بيتفك تشفيره في الذاكرة ويترسم صور، من غير أي لينك تحميل -->
+<div id="pv" hidden role="dialog" aria-modal="true" aria-labelledby="pvT">
+  <div class="pv-bar">
+    <button class="pv-x" id="pvX" type="button" aria-label="إغلاق">✕</button>
+    <div class="pv-t"><b id="pvT"></b><span id="pvS"></span></div>
+    <div class="pv-ctl">
+      <button id="pvOut" type="button" aria-label="تصغير">−</button>
+      <button id="pvZ" class="pv-z" type="button" title="الحجم الطبيعي">١٠٠٪</button>
+      <button id="pvIn" type="button" aria-label="تكبير">+</button>
+    </div>
+    <span class="pv-pg" id="pvPg"></span>
+  </div>
+  <div class="pv-main">
+    <div class="pv-body" id="pvB"><div class="pv-pages" id="pvP"></div></div>
+    <div class="pv-st" id="pvSt" hidden></div>
+    <div class="pv-note" id="pvN">الملف ده للعرض بس — التحميل والطباعة والنسخ مقفولين</div>
+  </div>
 </div>
 
 <script src="data/course-1.js"></script>
@@ -442,6 +555,7 @@ footer{
 
   function show(n){
     cur = n; markActive(n);
+    PV_ITEMS = [];
     var w = null, ws = weeks();
     for(var i=0;i<ws.length;i++) if(ws[i].n===n) w=ws[i];
     var panel = document.getElementById('panel');
@@ -481,11 +595,17 @@ footer{
   }
 
   function cnt(a){ a=a||[]; return a.length ? ar(a.length) : '—'; }
-  function qCount(a){ a=a||[]; return a.length ? ar(a.length)+' أسئلة' : '—'; }
+  function qCount(a){
+    var n = (a||[]).length;
+    if(!n) return '—';
+    if(n === 1) return 'سؤال واحد';
+    if(n === 2) return 'سؤالين';
+    return ar(n) + (n <= 10 ? ' أسئلة' : ' سؤال');
+  }
   function secCount(a){
     a = a||[];
     var done = 0;
-    for(var i=0;i<a.length;i++) if(safeUrl(a[i].url)) done++;
+    for(var i=0;i<a.length;i++) if(hasFile(a[i]) || safeUrl(a[i].url)) done++;
     return a.length ? ar(done)+' من '+ar(a.length) : '—';
   }
   function assignChip(as){
@@ -515,9 +635,17 @@ footer{
     if(!items.length) return '<div class="empty">لسه ما اترفعش</div>';
     return items.map(function(it){ return rowHtml(it); }).join('');
   }
+  var LOCK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
   function rowHtml(it){
-    var u = safeUrl(it.url);
     var label = esc(it.label||'بند');
+    if(hasFile(it)){
+      var idx = PV_ITEMS.push(it) - 1, sz = sizeTxt(it.file.s);
+      return '<button type="button" class="row pv" data-pv="'+idx+'">'+
+             '<span class="label">'+label+'</span><span class="spacer"></span>'+
+             '<span class="tag">'+LOCK_SVG+esc(it.kind||'PDF')+(sz?' · '+sz:'')+'</span>'+
+             '<span class="arrow">←</span></button>';
+    }
+    var u = safeUrl(it.url);
     if(!u){
       return '<div class="row off"><span class="label">'+label+'</span>'+
              '<span class="spacer"></span><span class="tag">لسه</span></div>';
@@ -592,7 +720,480 @@ footer{
         if(why) why.classList.add('on');
       });
     }
+    var pvr = document.querySelectorAll('.row.pv');
+    for(var r=0;r<pvr.length;r++){
+      pvr[r].addEventListener('click', function(){
+        var it = PV_ITEMS[+this.getAttribute('data-pv')];
+        if(it) pvOpen(it, cur, this);
+      });
+    }
   }
+
+  /* =====================================================================
+     العارض المحمي
+     الملف متخزن على GitHub مشفّر (.bin). بيتنزل، يتفك تشفيره في الذاكرة
+     بمفتاح المقرر، وكل صفحة بتترسم صورة عليها علامة مائية.
+     مفيش لينك للـ PDF، ولا زرار تحميل، والطباعة والنسخ والكليك يمين مقفولين.
+     ===================================================================== */
+  var PDFJS_V = '5.7.284';
+  var CDNS = ['https://cdn.jsdelivr.net/npm/pdfjs-dist@'+PDFJS_V, 'https://unpkg.com/pdfjs-dist@'+PDFJS_V];
+  var BIN_RE = /^[A-Za-z0-9._-]+\.bin$/;
+  var WM2 = 'HASSAN MOHAMED HOSNY';
+  var ZS = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3];
+  var MAX_PX = 12e6;
+  var PV_ITEMS = [];
+  var libP = null, keyP = null, libTry = 0;
+  var pv = {tok:0, open:false, pushed:false, skipPop:false, from:null, task:null, doc:null,
+            pages:[], z:1, cur:0, busy:false, io:null, gen:0, raf:0, nt:0, rt:0, wacc:0};
+
+  function $(id){ return document.getElementById(id); }
+  function hasFile(it){ return !!(it && it.file && typeof it.file.n==='string' && BIN_RE.test(it.file.n)); }
+  function sizeTxt(s){
+    s = +s || 0;
+    if(!s) return '';
+    return s < 1048576 ? Math.max(1, Math.round(s/1024))+' KB' : (s/1048576).toFixed(1).replace(/\.0$/,'')+' MB';
+  }
+
+  function loadLib(){
+    if(libP) return libP;
+    var imp;
+    try{ imp = new Function('u', 'return import(u)'); }
+    catch(e){ return Promise.reject(e); }
+    // المتصفح بيفتكر أي import فشل، فالمحاولة التانية بعنوان مختلف سنة
+    var q = libTry++ ? '?t='+libTry : '';
+    libP = new Promise(function(ok, bad){
+      var i = 0;
+      (function next(err){
+        if(i >= CDNS.length){ bad(err || new Error('lib')); return; }
+        var base = CDNS[i++];
+        Promise.resolve().then(function(){ return imp(base+'/legacy/build/pdf.min.mjs'+q); })
+          .then(function(lib){
+            if(!lib || !lib.getDocument) throw new Error('lib');
+            lib.GlobalWorkerOptions.workerSrc = base+'/legacy/build/pdf.worker.min.mjs'+q;
+            ok({lib:lib, base:base});
+          })
+          .catch(next);
+      })();
+    });
+    libP.catch(function(){ libP = null; });
+    return libP;
+  }
+
+  function fileKey(){
+    if(keyP) return keyP;
+    if(!DATA || typeof DATA.fk!=='string' || !DATA.fk) return Promise.reject(new Error('nokey'));
+    var raw;
+    try{ raw = b64d(DATA.fk); }catch(e){ return Promise.reject(new Error('nokey')); }
+    keyP = crypto.subtle.importKey('raw', raw, {name:'AES-GCM'}, false, ['decrypt']);
+    keyP.catch(function(){ keyP = null; });
+    return keyP;
+  }
+
+  function fetchBin(url, onp, fresh){
+    var opt = {credentials:'omit'};
+    if(fresh) opt.cache = 'reload';   // «جرّب تاني» ماياخدش 404 قديم من الكاش
+    if(window.AbortController){ pv.ac = new AbortController(); opt.signal = pv.ac.signal; }
+    return fetch(url, opt).then(function(r){
+      if(!r.ok){ var e = new Error('http'); e.status = r.status; throw e; }
+      var total = +(r.headers.get('content-length')||0);
+      if(!total || !r.body || !r.body.getReader) return r.arrayBuffer();
+      var rd = r.body.getReader(), parts = [], got = 0;
+      return (function pump(){
+        return rd.read().then(function(x){
+          if(x.done){
+            var out = new Uint8Array(got), o = 0;
+            for(var i=0;i<parts.length;i++){ out.set(parts[i], o); o += parts[i].length; }
+            return out.buffer;
+          }
+          parts.push(x.value); got += x.value.length;
+          onp(Math.min(1, got/total));
+          return pump();
+        });
+      })();
+    });
+  }
+
+  /* شكل الملف: "SPF1" + ١٢ بايت IV + النص المشفّر (AES-256-GCM) */
+  function openBin(buf){
+    var u = new Uint8Array(buf);
+    if(u.length < 33 || u[0]!==83 || u[1]!==80 || u[2]!==70 || u[3]!==49) return Promise.reject(new Error('fmt'));
+    return fileKey().then(function(k){
+      return crypto.subtle.decrypt({name:'AES-GCM', iv:u.subarray(4,16)}, k, u.subarray(16));
+    });
+  }
+
+  function pvStatus(kind, msg, retry, bar){
+    var st = $('pvSt');
+    if(!kind){ st.hidden = true; st.innerHTML = ''; return; }
+    st.hidden = false;
+    if(kind === 'load'){
+      st.innerHTML = '<div class="pv-spin"></div><div class="msg">'+esc(msg)+'</div>'+
+        (bar ? '<div class="pv-prog"><i id="pvBar"></i></div>' : '');
+    } else {
+      st.innerHTML = '<div class="pv-ic">!</div><div class="msg">'+esc(msg)+'</div>'+
+        (retry ? '<button class="pv-retry" id="pvR" type="button">جرّب تاني</button>' : '');
+      if(retry) $('pvR').onclick = retry;
+    }
+  }
+
+  function pvOpen(it, wn, from){
+    if(!hasFile(it)) return;
+    pv.from = from || null;
+    $('pvT').textContent = it.label || 'ملف';
+    $('pvS').textContent = 'الأسبوع '+ar(wn)+' · للعرض فقط';
+    $('pvPg').innerHTML = '';
+    var el = $('pv');
+    el.hidden = false;
+    document.body.classList.add('vw-open');
+    requestAnimationFrame(function(){ el.classList.add('on'); });
+    pv.open = true;
+    if(!pv.pushed){ try{ history.pushState({pv:1}, ''); pv.pushed = true; }catch(e){} }
+    try{ $('pvX').focus({preventScroll:true}); }catch(e){}
+    pvLoad(it.file);
+  }
+
+  function pvLoad(f, again){
+    pvReset();
+    var tok = ++pv.tok, stage = 'fetch';
+    pvStatus('load', 'جارٍ تحميل الملف…', null, true);
+    var lib = loadLib();
+    lib.catch(function(){});
+    var url = 'data/'+f.n+(f.v ? '?v='+encodeURIComponent(f.v) : '');
+    fetchBin(url, function(r){
+      if(tok !== pv.tok) return;
+      var b = $('pvBar'); if(b) b.style.width = Math.round(r*100)+'%';
+    }, again)
+    .then(function(buf){
+      if(tok !== pv.tok) throw 0;
+      stage = 'decrypt';
+      return openBin(buf);
+    })
+    .then(function(pdf){
+      if(tok !== pv.tok) throw 0;
+      stage = 'lib';
+      pvStatus('load', 'جارٍ تجهيز الصفحات…');
+      return lib.then(function(L){ return {L:L, data:new Uint8Array(pdf)}; });
+    })
+    .then(function(x){
+      if(tok !== pv.tok) throw 0;
+      stage = 'parse';
+      var b = x.L.base;
+      pv.task = x.L.lib.getDocument({
+        data:x.data, verbosity:0, enableXfa:false,
+        cMapUrl:b+'/cmaps/', cMapPacked:true,
+        standardFontDataUrl:b+'/standard_fonts/', wasmUrl:b+'/wasm/', iccUrl:b+'/iccs/'
+      });
+      return pv.task.promise;
+    })
+    .then(function(doc){
+      if(tok !== pv.tok) throw 0;
+      pv.doc = doc;
+      return pvPages(doc, tok);
+    })
+    .then(function(){
+      if(tok !== pv.tok) return;
+      pvStatus(null);
+      pvLayout(); pvObserve(); pvTrack(); pvPump();
+    })
+    .catch(function(e){
+      if(tok !== pv.tok || e === 0) return;
+      var retry = function(){ pvLoad(f, true); }, m;
+      if(stage === 'fetch'){
+        if(e && e.status === 404) m = 'الملف لسه ما اترفعش — جرّب كمان شوية';
+        else if(e && e.status) m = 'السيرفر مردّش — جرّب تاني';
+        else m = 'مفيش اتصال بالنت — اتأكد وجرّب تاني';
+      }
+      else if(stage === 'decrypt'){ m = 'الملف ده مش متوافق مع المقرر — بلّغ المعيد'; retry = null; }
+      else if(stage === 'lib') m = 'العارض ما اتحمّلش — اتأكد من النت، ولو فضلت المشكلة حدّث المتصفح';
+      else if(e && e.name === 'InvalidPDFException'){ m = 'الملف ده مش PDF سليم — بلّغ المعيد'; retry = null; }
+      else m = 'تعذّر فتح الملف — جرّب تاني';
+      pvStatus('err', m, retry);
+    });
+  }
+
+  function pvPages(doc, tok){
+    var jobs = [];
+    for(var i=1;i<=doc.numPages;i++) jobs.push(doc.getPage(i));
+    return Promise.all(jobs).then(function(pages){
+      if(tok !== pv.tok) throw 0;
+      var box = $('pvP');
+      box.innerHTML = '';
+      pv.pages = pages.map(function(pg, i){
+        var vp = pg.getViewport({scale:1});
+        var el = document.createElement('div');
+        el.className = 'pv-page';
+        el.setAttribute('data-i', i);
+        el.innerHTML = '<div class="sh"></div>';
+        box.appendChild(el);
+        return {i:i, pg:pg, w:vp.width, h:vp.height, el:el, cv:null, task:null,
+                near:false, stale:true, bad:false, cw:0, ch:0};
+      });
+    });
+  }
+
+  function pvAvail(){
+    var b = $('pvB');
+    return Math.max(160, Math.min((b.clientWidth || window.innerWidth) - 24, 900));
+  }
+
+  /* كل صفحة بتاخد عرض الشاشة (لحد ٩٠٠px) × التكبير */
+  function pvLayout(){
+    var aw = pvAvail();
+    pv.gen++;
+    for(var i=0;i<pv.pages.length;i++){
+      var p = pv.pages[i], s = aw / p.w * pv.z;
+      p.cw = Math.round(p.w*s); p.ch = Math.round(p.h*s);
+      p.el.style.width = p.cw+'px'; p.el.style.height = p.ch+'px';
+      p.stale = true;
+    }
+  }
+
+  function pvObserve(){
+    if(pv.io){ pv.io.disconnect(); pv.io = null; }
+    if(!('IntersectionObserver' in window)){
+      for(var k=0;k<pv.pages.length;k++) pv.pages[k].near = true;
+      return;
+    }
+    pv.io = new IntersectionObserver(function(ents){
+      for(var i=0;i<ents.length;i++){
+        var p = pv.pages[+ents[i].target.getAttribute('data-i')];
+        if(!p) continue;
+        p.near = ents[i].isIntersecting;
+        if(!p.near) pvDrop(p);
+      }
+      pvPump();
+    }, {root:$('pvB'), rootMargin:'100% 0px 100% 0px'});
+    for(var j=0;j<pv.pages.length;j++) pv.io.observe(pv.pages[j].el);
+  }
+
+  /* الصفحات البعيدة عن الشاشة بتتشال من الذاكرة (مهم للموبايل) */
+  function pvDrop(p){
+    if(p.task){ try{ p.task.cancel(); }catch(e){} p.task = null; }
+    if(p.cv){
+      p.cv.width = 0; p.cv.height = 0;
+      if(p.cv.parentNode) p.cv.parentNode.removeChild(p.cv);
+      p.cv = null;
+    }
+    p.el.classList.remove('ld');
+    p.stale = true;
+  }
+
+  function pvPump(){
+    if(pv.busy || !pv.doc || !pv.open) return;
+    var best = null, bd = 1e9;
+    for(var i=0;i<pv.pages.length;i++){
+      var p = pv.pages[i];
+      if(p.near && !p.bad && (p.stale || !p.cv)){
+        var d = Math.abs(i - pv.cur);
+        if(d < bd){ bd = d; best = p; }
+      }
+    }
+    if(!best) return;
+    pv.busy = true;
+    var tok = pv.tok;
+    pvRender(best).then(null, function(){}).then(function(){
+      if(tok !== pv.tok) return;
+      pv.busy = false;
+      pvPump();
+    });
+  }
+
+  function pvRender(p){
+    var gen = pv.gen;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    var s = p.cw / p.w * dpr;
+    var area = p.w * p.h * s * s;
+    if(area > MAX_PX) s *= Math.sqrt(MAX_PX / area);
+    var vp = p.pg.getViewport({scale:s});
+    var cv = document.createElement('canvas');
+    cv.width = Math.max(1, Math.floor(vp.width));
+    cv.height = Math.max(1, Math.floor(vp.height));
+    if(!p.cv) p.el.classList.add('ld');
+    var t = p.pg.render({canvas:cv, viewport:vp});
+    p.task = t;
+    return t.promise.then(function(){
+      if(p.task === t) p.task = null;
+      p.el.classList.remove('ld');
+      if(!p.near || !pv.open){ cv.width = 0; cv.height = 0; return; }
+      stamp(cv);
+      if(p.cv){
+        p.cv.width = 0; p.cv.height = 0;
+        if(p.cv.parentNode) p.cv.parentNode.removeChild(p.cv);
+      }
+      p.el.insertBefore(cv, p.el.firstChild);
+      p.cv = cv;
+      p.stale = (gen !== pv.gen);
+    }, function(e){
+      if(p.task === t) p.task = null;
+      cv.width = 0; cv.height = 0;
+      p.el.classList.remove('ld');
+      if(!(e && e.name === 'RenderingCancelledException')){ p.bad = true; p.el.classList.add('bad'); }
+      throw e;
+    });
+  }
+
+  /* علامة مائية جوه الصورة نفسها: اسم المقرر + اسمك */
+  function stamp(cv){
+    var ctx = cv.getContext('2d');
+    if(!ctx) return;
+    var w = cv.width, h = cv.height;
+    var t1 = (DATA && DATA.meta && DATA.meta.title) || '';
+    var fs = Math.max(10, Math.round(Math.min(w, h) / 26));
+    var gx = fs*14, gy = fs*6, R = Math.sqrt(w*w + h*h)/2 + gx, pts = [];
+    for(var y=-R, r=0; y<=R; y+=gy, r++){
+      for(var x=-R + (r%2 ? gx/2 : 0); x<=R; x+=gx) pts.push(x, y);
+    }
+    ctx.save();
+    ctx.translate(w/2, h/2);
+    ctx.rotate(-Math.PI/7);
+    ctx.globalAlpha = 0.085;
+    ctx.fillStyle = '#103F39';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var i;
+    try{ ctx.direction = 'rtl'; }catch(e){}
+    ctx.font = '700 '+fs+'px Tajawal, "IBM Plex Sans Arabic", Arial, sans-serif';
+    for(i=0;i<pts.length;i+=2) ctx.fillText(t1, pts[i], pts[i+1] - fs*0.55);
+    try{ ctx.direction = 'ltr'; }catch(e){}
+    ctx.font = '600 '+Math.round(fs*0.56)+'px "IBM Plex Sans Arabic", Arial, sans-serif';
+    for(i=0;i<pts.length;i+=2) ctx.fillText(WM2, pts[i], pts[i+1] + fs*0.6);
+    ctx.restore();
+  }
+
+  function pvTrack(){
+    var b = $('pvB'), n = pv.pages.length;
+    if(!n){ $('pvPg').innerHTML = ''; return; }
+    var y = b.scrollTop + b.clientHeight*0.35, c = 0;
+    for(var i=0;i<n;i++){ if(pv.pages[i].el.offsetTop <= y) c = i; else break; }
+    pv.cur = c;
+    $('pvPg').innerHTML = '<span class="pw">صفحة </span>'+ar(c+1)+' من '+ar(n);
+  }
+
+  function zoomUi(){
+    $('pvZ').textContent = ar(Math.round(pv.z*100))+'٪';
+    $('pvOut').disabled = pv.z <= ZS[0];
+    $('pvIn').disabled = pv.z >= ZS[ZS.length-1];
+  }
+
+  /* بيحافظ على مكانك في الصفحة بعد التكبير/التصغير */
+  function pvAnchor(fn){
+    var b = $('pvB'), p = pv.pages[pv.cur];
+    var off = p ? (b.scrollTop - p.el.offsetTop) / Math.max(1, p.el.offsetHeight) : 0;
+    fn();
+    if(p) b.scrollTop = p.el.offsetTop + off*p.el.offsetHeight;
+    var extra = b.scrollWidth - b.clientWidth;
+    if(extra > 0){
+      var rtl = (window.getComputedStyle ? getComputedStyle(b).direction : 'rtl') === 'rtl';
+      b.scrollLeft = (rtl ? -1 : 1) * extra/2;
+    }
+  }
+
+  function pvZoom(d){
+    if(!pv.doc || !pv.pages.length) return;
+    var i = ZS.indexOf(pv.z); if(i < 0) i = 2;
+    var nz = d === 0 ? 1 : ZS[Math.max(0, Math.min(ZS.length-1, i+d))];
+    if(nz === pv.z) return;
+    pvAnchor(function(){ pv.z = nz; pvLayout(); });
+    zoomUi(); pvTrack(); pvPump();
+  }
+
+  function pvReset(){
+    if(pv.ac){ try{ pv.ac.abort(); }catch(e){} pv.ac = null; }
+    if(pv.io){ pv.io.disconnect(); pv.io = null; }
+    for(var i=0;i<pv.pages.length;i++){
+      var p = pv.pages[i];
+      if(p.task){ try{ p.task.cancel(); }catch(e){} }
+      if(p.cv){ p.cv.width = 0; p.cv.height = 0; }
+    }
+    pv.pages = [];
+    var t = pv.task, d = pv.doc;
+    pv.task = null; pv.doc = null;
+    if(t){ try{ t.destroy(); }catch(e){} }
+    else if(d){ try{ d.destroy(); }catch(e){} }
+    pv.busy = false; pv.cur = 0; pv.z = 1; pv.wacc = 0;
+    $('pvP').innerHTML = '';
+    $('pvB').scrollTop = 0;
+    $('pvPg').innerHTML = '';
+    pvStatus(null);
+    zoomUi();
+  }
+
+  function pvClose(fromPop){
+    if(!pv.open) return;
+    pv.open = false;
+    pv.tok++;
+    pvReset();
+    var el = $('pv');
+    el.classList.remove('on'); el.hidden = true;
+    document.body.classList.remove('vw-open');
+    $('pvN').classList.remove('on');
+    if(pv.pushed){
+      pv.pushed = false;
+      if(!fromPop){ pv.skipPop = true; try{ history.back(); }catch(e){ pv.skipPop = false; } }
+    }
+    if(pv.from){ try{ pv.from.focus({preventScroll:true}); }catch(e){} pv.from = null; }
+  }
+
+  function pvNote(){
+    var n = $('pvN');
+    n.classList.add('on');
+    clearTimeout(pv.nt);
+    pv.nt = setTimeout(function(){ n.classList.remove('on'); }, 2200);
+  }
+
+  $('pvX').addEventListener('click', function(){ pvClose(false); });
+  $('pvIn').addEventListener('click', function(){ pvZoom(1); });
+  $('pvOut').addEventListener('click', function(){ pvZoom(-1); });
+  $('pvZ').addEventListener('click', function(){ pvZoom(0); });
+
+  $('pvB').addEventListener('scroll', function(){
+    if(pv.raf) return;
+    pv.raf = requestAnimationFrame(function(){ pv.raf = 0; pvTrack(); });
+  }, {passive:true});
+
+  /* Ctrl + عجلة الماوس (أو قرصة التاتش باد) = تكبير العارض نفسه */
+  $('pvB').addEventListener('wheel', function(e){
+    if(!e.ctrlKey) return;
+    e.preventDefault();
+    pv.wacc += e.deltaY;
+    if(Math.abs(pv.wacc) > 80){ pvZoom(pv.wacc < 0 ? 1 : -1); pv.wacc = 0; }
+  }, {passive:false});
+
+  window.addEventListener('resize', function(){
+    if(!pv.open) return;
+    clearTimeout(pv.rt);
+    pv.rt = setTimeout(function(){
+      if(pv.open && pv.pages.length){ pvAnchor(pvLayout); pvTrack(); pvPump(); }
+    }, 160);
+  });
+
+  /* زرار الرجوع في الموبايل بيقفل الملف بدل ما يخرج من البورتال */
+  window.addEventListener('popstate', function(){
+    if(pv.skipPop){ pv.skipPop = false; return; }
+    if(pv.open){ pv.pushed = false; pvClose(true); }
+  });
+
+  (function(){
+    var el = $('pv');
+    ['contextmenu','dragstart','selectstart','copy','cut'].forEach(function(t){
+      el.addEventListener(t, function(e){
+        e.preventDefault();
+        if(t === 'contextmenu' || t === 'copy' || t === 'cut') pvNote();
+      });
+    });
+  })();
+
+  document.addEventListener('keydown', function(e){
+    if(!pv.open) return;
+    var c = e.code || '', k = String(e.key || '').toLowerCase(), mod = e.ctrlKey || e.metaKey;
+    if(k === 'escape' || c === 'Escape'){ e.preventDefault(); pvClose(false); return; }
+    if(mod && (/^Key[SPCAX]$/.test(c) || (k.length === 1 && 'spcax'.indexOf(k) >= 0))){
+      e.preventDefault(); e.stopPropagation(); pvNote(); return;
+    }
+    if(mod && (c === 'Equal' || c === 'NumpadAdd' || k === '+' || k === '=')){ e.preventDefault(); pvZoom(1); return; }
+    if(mod && (c === 'Minus' || c === 'NumpadSubtract' || k === '-')){ e.preventDefault(); pvZoom(-1); return; }
+    if(mod && (c === 'Digit0' || c === 'Numpad0' || k === '0')){ e.preventDefault(); pvZoom(0); }
+  }, true);
 
   pw.focus();
 })();

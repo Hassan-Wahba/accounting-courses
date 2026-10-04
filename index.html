@@ -120,7 +120,7 @@ header .sub{margin-top:6px;font-size:13px;color:#A9C2BC;letter-spacing:.2px}
   display:flex;align-items:center;justify-content:center;
   transition:all .16s;
 }
-.wk:hover:not(.locked){border-color:var(--pine);background:var(--soft)}
+.wk:hover:not(.locked):not(.active){border-color:var(--pine);background:var(--soft)}
 .wk.active{background:var(--pine);color:#fff;border-color:#fff;box-shadow:0 0 0 2px var(--gold)}
 .wk.locked{opacity:.38;cursor:not-allowed;background:var(--soft)}
 
@@ -225,6 +225,33 @@ a.row:hover{background:#fff;border-color:var(--pine);transform:translateX(-2px)}
 }
 
 .empty{font-size:13px;color:var(--muted);padding:10px 2px;text-align:center}
+
+/* الاختبار الأسبوعي */
+.chip.soon{background:#FBF3DF;color:#7A5B17;font-weight:600}
+.chip.hot{background:var(--gold);color:#33270B;font-weight:700}
+.chip.hot:before{
+  content:'';display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:#33270B;margin-left:2px;animation:tblink 1.4s ease-in-out infinite;
+}
+@keyframes tblink{50%{opacity:.25}}
+/* على الشاشات الضيقة اليوم بيتقص بـ «…» لكن الساعة دايمًا باينة */
+.sec.tst .chip{display:inline-flex;align-items:center;gap:4px;min-width:0;flex:0 1 auto;white-space:nowrap}
+.sec.tst .chip .c1{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.sec.tst .chip .c2{flex:0 0 auto}
+.tw{display:block}
+.tw .lb{display:block;margin-bottom:2px}
+.tw .dt{display:block;font-family:var(--fh);font-size:16px;font-weight:700;color:var(--pine);line-height:1.5}
+.tw .tm{display:block;font-size:14px;font-weight:500;color:var(--ink)}
+.tw .dt.sm{font-size:15px}
+.row.wait{background:#FFFDF6;border:1px dashed #E2D3A6;color:var(--ink)}
+.row.wait svg{flex:0 0 auto;width:15px;height:15px;fill:none;stroke:var(--gold-dim);stroke-width:2.2}
+.row.wait b,.tl b{font-family:var(--fh);font-weight:700;color:var(--pine)}
+a.row.go{background:var(--pine);border-color:var(--pine)}
+a.row.go:hover{background:var(--pine-soft);border-color:var(--pine-soft)}
+a.row.go .label{color:#fff;font-weight:700;font-family:var(--fh);font-size:15.5px}
+a.row.go .tag{color:#BFD6D0}
+a.row.go .arrow{color:var(--gold)}
+.tl{font-size:12.5px;color:var(--muted);margin-top:8px;padding-right:2px}
 
 /* حالة القفل */
 .locked-box{
@@ -360,7 +387,7 @@ body.vw-open{overflow:hidden}
       <div id="err"></div>
     </div>
   </div>
-  <div class="gate-foot">HASSAN MOHAMED HOSNY</div>
+  <div class="gate-foot">HASSAN MOHAMED HOSNY WAHBA</div>
 </div>
 
 <div id="app" hidden>
@@ -380,7 +407,7 @@ body.vw-open{overflow:hidden}
 
   <main><div class="wrap" id="panel"></div></main>
 
-  <footer>HASSAN MOHAMED HOSNY</footer>
+  <footer>HASSAN MOHAMED HOSNY WAHBA</footer>
 </div>
 
 <!-- العارض المحمي: الملف بيتفك تشفيره في الذاكرة ويترسم صور، من غير أي لينك تحميل -->
@@ -518,6 +545,7 @@ body.vw-open{overflow:hidden}
     buildWeeks();
     cur = pickWeek();
     show(cur);
+    startClock();
   }
 
   function weeks(){ return DATA.weeks||[]; }
@@ -555,7 +583,7 @@ body.vw-open{overflow:hidden}
 
   function show(n){
     cur = n; markActive(n);
-    PV_ITEMS = [];
+    PV_ITEMS = []; TST = null;
     var w = null, ws = weeks();
     for(var i=0;i<ws.length;i++) if(ws[i].n===n) w=ws[i];
     var panel = document.getElementById('panel');
@@ -580,60 +608,70 @@ body.vw-open{overflow:hidden}
       return;
     }
 
-    var secs = [
-      sec(1,'السكشن',   secCount(w.section), bodySection(w.section)),
-      sec(2,'مسائل وتدريبات', cnt(w.problems), bodyList(w.problems)),
-      sec(3,'اختبار قصير', qCount(w.quiz), bodyQuiz(w.quiz)),
-      sec(4,'مصطلحات',  cnt(w.terms), bodyTerms(w.terms)),
-      sec(5,'تكليف',    assignChip(w.assign), bodyAssign(w.assign))
-    ].join('');
+    /* الخانة اللي مفيهاش حاجة مرفوعة مش بتظهر خالص، والترقيم بيمشي على الظاهر بس */
+    var B = [], L, tv = null;
+    if((L = visItems(w.section)).length)  B.push({k:'sec',   t:'السكشن',         chip:ar(L.length), body:rowsHtml(L)});
+    if((L = visItems(w.problems)).length) B.push({k:'prob',  t:'مسائل وتدريبات', chip:ar(L.length), body:rowsHtml(L)});
+    if((L = visTerms(w.terms)).length)    B.push({k:'terms', t:'مصطلحات',        chip:ar(L.length), body:bodyTerms(L)});
+    var as = w.assign || {}, ai = visItems(as.items), tx = String(as.text || '').trim();
+    if(tx || ai.length) B.push({k:'assign', t:'تكليف', chip:assignChip(as.due), body:bodyAssign(as.due, tx, ai)});
+    if((L = visQuiz(w.quiz)).length)      B.push({k:'quiz',  t:'اختبار تجريبي',  chip:qCount(L.length), body:bodyQuiz(L)});
+    var T = testOf(w.test);
+    if(T){
+      tv = tstView(T);
+      B.push({k:'test', t:'الاختبار الأسبوعي', chip:tv.chip, cc:tv.cls, body:tstBody(T, tv)});
+    }
 
-    panel.innerHTML = head + secs;
+    if(!B.length){
+      panel.innerHTML = head +
+        '<div class="locked-box"><div class="ic">⏳</div>'+
+        '<h3>لسه مفيش محتوى للأسبوع ده</h3>'+
+        '<p>أول ما ينزل هيظهر هنا</p></div>';
+      return;
+    }
+
+    panel.innerHTML = head + B.map(function(b, i){ return secHtml(i + 1, b); }).join('');
     wire();
     var first = panel.querySelector('.sec');
     if(first) first.classList.add('open');
+    if(T){
+      TST = {T:T, k:tv.k, ch:tv.chip, el:panel.querySelector('.sec[data-k="test"]')};
+      if(tv.k === 'live' && TST.el) TST.el.classList.add('open');
+    }
   }
 
-  function cnt(a){ a=a||[]; return a.length ? ar(a.length) : '—'; }
-  function qCount(a){
-    var n = (a||[]).length;
-    if(!n) return '—';
+  /* اللي يتعرض بس: بند عليه لينك أو ملف محمي، مصطلح مكتوب، سؤال فيه نص واختيارين على الأقل */
+  function visItems(a){
+    return (a || []).filter(function(it){ return it && (hasFile(it) || safeUrl(it.url)); });
+  }
+  function visTerms(a){
+    return (a || []).filter(function(t){ return t && (String(t.term || '').trim() || String(t.def || '').trim()); });
+  }
+  function filled(c){ return String(c == null ? '' : c).trim() !== ''; }
+  function visQuiz(a){
+    return (a || []).filter(function(q){
+      var ch = (q && q.choices) || [];
+      return q && filled(q.q) && ch.filter(filled).length >= 2 && filled(ch[q.answer]);
+    });
+  }
+  function rowsHtml(a){ return a.map(function(it){ return rowHtml(it); }).join(''); }
+
+  function qCount(n){
     if(n === 1) return 'سؤال واحد';
     if(n === 2) return 'سؤالين';
     return ar(n) + (n <= 10 ? ' أسئلة' : ' سؤال');
   }
-  function secCount(a){
-    a = a||[];
-    var done = 0;
-    for(var i=0;i<a.length;i++) if(hasFile(a[i]) || safeUrl(a[i].url)) done++;
-    return a.length ? ar(done)+' من '+ar(a.length) : '—';
-  }
-  function assignChip(as){
-    as = as||{};
-    if(as.due) return 'التسليم '+fmtShort(as.due);
-    var has = (as.text&&as.text.trim()) || (as.items&&as.items.length);
-    return has ? 'مطلوب' : '—';
-  }
+  function assignChip(due){ return due ? 'التسليم '+fmtShort(due) : 'مطلوب'; }
 
-  function sec(n,title,chip,body){
-    return '<section class="sec"><button class="sec-head">'+
+  function secHtml(n, b){
+    return '<section class="sec'+(b.k === 'test' ? ' tst' : '')+'" data-k="'+b.k+'">'+
+      '<button class="sec-head" type="button">'+
       '<span class="badge">'+ar(n)+'</span>'+
-      '<span class="sec-title">'+title+'</span>'+
-      '<span class="chip">'+chip+'</span>'+
+      '<span class="sec-title">'+b.t+'</span>'+
+      '<span class="chip'+(b.cc ? ' '+b.cc : '')+'">'+(b.k === 'test' ? b.chip : esc(b.chip))+'</span>'+
       '<span class="spacer"></span>'+
       '<span class="caret">▼</span>'+
-      '</button><div class="sec-body">'+body+'</div></section>';
-  }
-
-  function bodySection(items){
-    items = items||[];
-    if(!items.length) return '<div class="empty">لسه ما اترفعش</div>';
-    return items.map(function(it){ return rowHtml(it); }).join('');
-  }
-  function bodyList(items){
-    items = items||[];
-    if(!items.length) return '<div class="empty">لسه ما اترفعش</div>';
-    return items.map(function(it){ return rowHtml(it); }).join('');
+      '</button><div class="sec-body">'+b.body+'</div></section>';
   }
   var LOCK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
   function rowHtml(it){
@@ -656,10 +694,9 @@ body.vw-open{overflow:hidden}
   }
 
   function bodyQuiz(qs){
-    qs = qs||[];
-    if(!qs.length) return '<div class="empty">لسه ما اترفعش</div>';
     return qs.map(function(q,i){
       var opts = (q.choices||[]).map(function(c,j){
+        if(!filled(c)) return '';   // اختيار فاضي مايظهرش، والترقيم الأصلي محفوظ في data-c
         return '<button class="opt" data-q="'+i+'" data-c="'+j+'">'+esc(c)+'</button>';
       }).join('');
       return '<div class="q" data-ans="'+(q.answer==null?-1:q.answer)+'">'+
@@ -671,8 +708,6 @@ body.vw-open{overflow:hidden}
   }
 
   function bodyTerms(ts){
-    ts = ts||[];
-    if(!ts.length) return '<div class="empty">لسه ما اترفعش</div>';
     return ts.map(function(t){
       return '<div class="term"><span class="t">'+esc(t.term||'')+'</span>'+
         (t.en?'<span class="en">'+esc(t.en)+'</span>':'')+
@@ -681,19 +716,14 @@ body.vw-open{overflow:hidden}
     }).join('');
   }
 
-  function bodyAssign(as){
-    as = as||{};
-    var items = as.items||[];
-    var text = (as.text||'').trim();
-    if(!as.due && !text && !items.length) return '<div class="empty">مفيش تكليف الأسبوع ده</div>';
+  function bodyAssign(due, text, items){
     var h = '';
-    if(as.due){
+    if(due){
       h += '<div class="due"><span class="lb">موعد التسليم</span>'+
-           '<span class="dt">'+esc(fmtDate(as.due))+'</span></div>';
+           '<span class="dt">'+esc(fmtDate(due))+'</span></div>';
     }
     if(text) h += '<div class="task">'+esc(text)+'</div>';
-    h += items.map(function(it){ return rowHtml(it); }).join('');
-    return h;
+    return h + rowsHtml(items);
   }
 
   function wire(){
@@ -713,7 +743,7 @@ body.vw-open{overflow:hidden}
         var all = box.querySelectorAll('.opt');
         for(var m=0;m<all.length;m++){
           all[m].disabled = true;
-          if(m === ans) all[m].classList.add('right');
+          if(+all[m].dataset.c === ans) all[m].classList.add('right');
         }
         if(+this.dataset.c !== ans) this.classList.add('wrong');
         var why = box.querySelector('.why');
@@ -730,6 +760,191 @@ body.vw-open{overflow:hidden}
   }
 
   /* =====================================================================
+     الاختبار الأسبوعي
+     لينك Microsoft Forms + ميعاد بيتكتب من اللوحة بتوقيت مصر.
+     قبل الميعاد الزرار مقفول وعليه عدّ تنازلي، وبيفتح لوحده في الميعاد
+     من غير ريفرش، وبعد النهاية بيكتب «انتهى».
+     ===================================================================== */
+  var AR_W = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  var DT_RE = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/;
+  var FORMS_RE = /^https:\/\/(forms\.office\.com|forms\.microsoft\.com|forms\.cloud\.microsoft)\//i;
+  var TST = null, SKEW = 0, CLK = 0;
+
+  /* الوقت دايمًا بتوقيت القاهرة، حتى لو موبايل الطالب مظبوط على بلد تانية */
+  var TZF = null;
+  try{
+    TZF = new Intl.DateTimeFormat('en-GB', {timeZone:'Africa/Cairo', hour12:false,
+      year:'numeric', month:'numeric', day:'numeric', hour:'numeric', minute:'numeric', second:'numeric'});
+    if(typeof TZF.formatToParts !== 'function') TZF = null;
+  }catch(e){ TZF = null; }
+
+  function tzOff(t){
+    var o = {};
+    TZF.formatToParts(new Date(t)).forEach(function(x){ o[x.type] = x.value; });
+    return Date.UTC(+o.year, +o.month - 1, +o.day, (+o.hour) % 24, +o.minute, +o.second) - Math.floor(t / 1000) * 1000;
+  }
+  function cairoMs(p){
+    if(!TZF) return new Date(p.y, p.mo - 1, p.d, p.h, p.mi).getTime();
+    var w = Date.UTC(p.y, p.mo - 1, p.d, p.h, p.mi);
+    return w - tzOff(w - tzOff(w));
+  }
+  function cairoDay(t){
+    var off = TZF ? tzOff(t) : -new Date(t).getTimezoneOffset() * 6e4;
+    return new Date(t + off).toISOString().slice(0, 10);
+  }
+  function addDay(day, k){
+    var p = day.split('-');
+    return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2] + k)).toISOString().slice(0, 10);
+  }
+  function now(){ return Date.now() + SKEW; }
+
+  function dtp(v){
+    var m = DT_RE.exec(String(v || ''));
+    if(!m) return null;
+    var p = {y:+m[1], mo:+m[2], d:+m[3], h:+m[4], mi:+m[5], day:m[1]+'-'+m[2]+'-'+m[3]};
+    if(p.mo < 1 || p.mo > 12 || p.d < 1 || p.d > 31 || p.h > 23 || p.mi > 59) return null;
+    p.ms = cairoMs(p);
+    return isNaN(p.ms) ? null : p;
+  }
+  /* اللوحة بتحفظ اللحظة نفسها (sAt/eAt) محسوبة على جهاز حسن، عشان لو متصفح الطالب
+     قديم ومايعرفش إن مصر رجّعت التوقيت الصيفي، الزرار برضه يفتح في ميعاده بالظبط */
+  function pinAt(p, ms){
+    if(p && typeof ms === 'number' && isFinite(ms) && ms > 1.6e12 && ms < 4.1e12) p.ms = ms;
+    return p;
+  }
+  function testOf(t){
+    if(!t || typeof t !== 'object') return null;
+    var url = safeUrl(t.url), s = pinAt(dtp(t.start), t.sAt), e = pinAt(dtp(t.end), t.eAt);
+    if(s && e && !(e.ms > s.ms)) e = null;
+    if(!url && !s) return null;
+    return {url:url, s:s, e:e};
+  }
+
+  function wday(p){ return AR_W[new Date(Date.UTC(p.y, p.mo - 1, p.d)).getUTCDay()]; }
+  function clock12(p){ return ar(p.h % 12 || 12) + ':' + ar((p.mi < 10 ? '0' : '') + p.mi); }
+  function per(p, short){
+    if(short) return p.h < 12 ? 'ص' : 'م';
+    return p.h < 12 ? 'صباحًا' : (p.h === 12 ? 'ظهرًا' : 'مساءً');
+  }
+  function dateMid(p){ return wday(p) + ' ' + ar(p.d) + ' ' + AR_M[p.mo - 1]; }
+  function dateFull(p){ return dateMid(p) + ' ' + ar(p.y); }
+  function timeFull(p){ return clock12(p) + ' ' + per(p); }
+  function rangeTxt(s, e){
+    return per(s) === per(e)
+      ? 'من ' + clock12(s) + ' لـ ' + clock12(e) + ' ' + per(e)
+      : 'من ' + timeFull(s) + ' لـ ' + timeFull(e);
+  }
+  /* الشارة: النهارده / بكرة / اسم اليوم (لو جوه الأسبوع ده) / التاريخ */
+  function whenDay(s, t){
+    var today = cairoDay(t);
+    if(s.day === today) return 'النهارده';
+    for(var k = 1; k < 7; k++){
+      if(s.day === addDay(today, k)) return k === 1 ? 'بكرة' : wday(s);
+    }
+    return ar(s.d) + ' ' + AR_M[s.mo - 1];
+  }
+
+  function unit(n, one, two, few, many){ return n === 1 ? one : n === 2 ? two : ar(n) + ' ' + (n <= 10 ? few : many); }
+  function dur(ms){
+    var s = Math.max(0, Math.floor(ms / 1000));
+    var d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60);
+    var H = function(n){ return unit(n, 'ساعة', 'ساعتين', 'ساعات', 'ساعة'); };
+    var M = function(n){ return unit(n, 'دقيقة', 'دقيقتين', 'دقايق', 'دقيقة'); };
+    if(d) return unit(d, 'يوم', 'يومين', 'أيام', 'يوم') + (h ? ' و' + H(h) : '');
+    if(h) return H(h) + (m ? ' و' + M(m) : '');
+    if(m) return M(m);
+    return unit(Math.max(1, s), 'ثانية', 'ثانيتين', 'ثواني', 'ثانية');
+  }
+
+  function tstState(T, t){
+    if(T.s && t < T.s.ms) return {k:'soon', left:T.s.ms - t};
+    if(T.e && t >= T.e.ms) return {k:'over', left:0};
+    return {k:T.s ? 'live' : 'open', left:T.e ? T.e.ms - t : 0};
+  }
+  function tstView(T){
+    var t = now(), v = tstState(T, t);
+    v.c1 = '';
+    if(v.k === 'soon'){ v.c1 = whenDay(T.s, t); v.c2 = clock12(T.s) + ' ' + per(T.s, true); v.cls = 'soon'; }
+    else if(v.k === 'live'){ v.c2 = 'شغال دلوقتي'; v.cls = 'hot'; }
+    else if(v.k === 'over'){ v.c2 = 'انتهى'; v.cls = ''; }
+    else { v.c2 = 'متاح'; v.cls = ''; }
+    v.chip = v.c1
+      ? '<span class="c1">' + esc(v.c1) + '،</span> <span class="c2">' + esc(v.c2) + '</span>'
+      : esc(v.c2);
+    return v;
+  }
+
+  function tstBody(T, v){
+    var s = T.s, e = T.e, w = '';
+    if(s && e && e.day !== s.day){
+      w = '<span class="dt sm">من ' + dateMid(s) + ' الساعة ' + timeFull(s) + '</span>' +
+          '<span class="dt sm">لحد ' + dateMid(e) + ' الساعة ' + timeFull(e) + '</span>';
+    } else if(s){
+      w = '<span class="dt">' + dateFull(s) + '</span>' +
+          '<span class="tm">' + (e ? rangeTxt(s, e) : 'الساعة ' + timeFull(s)) + '</span>';
+    } else if(e){
+      w = '<span class="dt">لحد ' + dateFull(e) + ' الساعة ' + timeFull(e) + '</span>';
+    }
+    return (w ? '<div class="due tw"><span class="lb">الميعاد</span>' + w + '</div>' : '') +
+           '<div class="tst-act">' + tstAct(T, v) + '</div>';
+  }
+  var LOCK_W = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+  function tstAct(T, v){
+    if(v.k === 'soon'){
+      return '<div class="row wait">' + LOCK_W + '<span class="label">بيفتح بعد <b class="cd">' + dur(v.left) + '</b></span></div>';
+    }
+    if(v.k === 'over') return '<div class="row off"><span class="label">انتهى ميعاد الاختبار</span></div>';
+    if(!T.url) return '<div class="row wait"><span class="label">اللينك لسه ما نزلش — حدّث الصفحة كمان شوية</span></div>';
+    return '<a class="row go" href="' + esc(T.url) + '" target="_blank" rel="noopener">' +
+             '<span class="label">ادخل الاختبار</span><span class="spacer"></span>' +
+             (FORMS_RE.test(T.url) ? '<span class="tag">Microsoft Forms</span>' : '') +
+             '<span class="arrow">←</span></a>' +
+           (T.e ? '<div class="tl">بيقفل بعد <b class="cd">' + dur(v.left) + '</b></div>' : '');
+  }
+
+  /* كل ثانية: لو الحالة اتغيرت (فتح/قفل) الزرار بيتبدّل، وإلا العداد بس بيتحدّث */
+  function tick(){
+    if(!TST || !TST.el || !TST.el.isConnected) return;
+    var v = tstView(TST.T), el = TST.el, chip = el.querySelector('.chip');
+    if(v.k !== TST.k){
+      TST.k = v.k;
+      el.querySelector('.tst-act').innerHTML = tstAct(TST.T, v);
+      if(v.k === 'live') el.classList.add('open');
+    } else {
+      var cd = el.querySelector('.tst-act .cd');
+      if(cd){ var tx = dur(v.left); if(cd.textContent !== tx) cd.textContent = tx; }
+    }
+    if(chip){
+      if(TST.ch !== v.chip){ chip.innerHTML = v.chip; TST.ch = v.chip; }
+      var cc = 'chip' + (v.cls ? ' ' + v.cls : '');
+      if(chip.className !== cc) chip.className = cc;
+    }
+  }
+
+  function startClock(){
+    if(CLK) return;
+    CLK = setInterval(tick, 1000);
+    document.addEventListener('visibilitychange', function(){ if(!document.hidden) tick(); });
+    var any = weeks().some(function(w){ return w && w.test && dtp(w.test.start); });
+    if(any) syncClock();
+  }
+
+  /* لو ساعة جهاز الطالب مش مظبوطة: بناخد الوقت من سيرفر GitHub (هيدر X-Timer) */
+  function syncClock(){
+    if(!window.fetch || !/^https?:$/.test(location.protocol)) return;
+    var t0 = Date.now();
+    fetch(location.href.split('#')[0], {method:'HEAD', cache:'no-store', credentials:'omit'}).then(function(r){
+      var t1 = Date.now();
+      if(t1 - t0 > 3000) return;   // النت بطيء: القراية مش دقيقة كفاية
+      var m = /S(\d{9,11})(?:\.(\d{1,6}))?/.exec(r.headers.get('x-timer') || '');
+      if(!m) return;
+      var srv = +m[1] * 1000 + (m[2] ? Math.round(+('0.' + m[2]) * 1000) : 0);
+      var sk = srv - (t0 + t1) / 2;
+      if(Math.abs(sk) > 30000 && Math.abs(sk) < 4e10){ SKEW = sk; tick(); }
+    }).catch(function(){});
+  }
+
+  /* =====================================================================
      العارض المحمي
      الملف متخزن على GitHub مشفّر (.bin). بيتنزل، يتفك تشفيره في الذاكرة
      بمفتاح المقرر، وكل صفحة بتترسم صورة عليها علامة مائية.
@@ -738,7 +953,7 @@ body.vw-open{overflow:hidden}
   var PDFJS_V = '5.7.284';
   var CDNS = ['https://cdn.jsdelivr.net/npm/pdfjs-dist@'+PDFJS_V, 'https://unpkg.com/pdfjs-dist@'+PDFJS_V];
   var BIN_RE = /^[A-Za-z0-9._-]+\.bin$/;
-  var WM2 = 'HASSAN MOHAMED HOSNY';
+  var WM2 = 'HASSAN MOHAMED HOSNY WAHBA';
   var ZS = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3];
   var MAX_PX = 12e6;
   var PV_ITEMS = [];
@@ -840,7 +1055,7 @@ body.vw-open{overflow:hidden}
     if(!hasFile(it)) return;
     pv.from = from || null;
     $('pvT').textContent = it.label || 'ملف';
-    $('pvS').textContent = 'الأسبوع '+ar(wn)+' · للعرض فقط';
+    $('pvS').textContent = 'الأسبوع '+ar(wn)+' — للعرض فقط';
     $('pvPg').innerHTML = '';
     var el = $('pv');
     el.hidden = false;
